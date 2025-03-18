@@ -1,4 +1,5 @@
 // lib/navbar/controllers/nav_controller.dart
+import 'package:drive_test_admin_dashboard/presentation/screens/auth/dashboard.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_contact_screen.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_customer_support_feed_screen.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_feature_access_lim_screen.dart';
@@ -12,7 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NavController extends GetxController {
-  var currentScreen = Rx<Widget>(const Center(child: Text("Body"))); // Declare as Rx<Widget>
+  // var currentScreen = Rx<Widget>(const Center(child: Text("Body"))); // Declare as Rx<Widget>
+  var currentScreen = Rx<Widget>(AdminDashboard());
 
   void changeScreen(String item) {
     switch (item) {

@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:drive_test_admin_dashboard/controller/navbar_controller.dart';
 
 class NavDrawer extends StatelessWidget {
-  final NavController navController = Get.find(); // Get the NavController instance
+  final NavController navController = Get.find();
+
+  NavDrawer({super.key}); // Get the NavController instance
 
   @override
   Widget build(BuildContext context) {
