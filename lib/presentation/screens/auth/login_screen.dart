@@ -1,4 +1,4 @@
-import 'package:drive_test_admin_dashboard/constants/auth_controller.dart';
+import 'package:drive_test_admin_dashboard/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

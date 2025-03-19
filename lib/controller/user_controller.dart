@@ -1,13 +1,12 @@
-import 'package:drive_test_admin_dashboard/model/user_model.dart';
-import 'package:drive_test_admin_dashboard/services/pi_service.dart';
-import 'package:flutter/widgets.dart';
+import 'package:drive_test_admin_dashboard/services/api_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:drive_test_admin_dashboard/model/user_model.dart';
 
 class UserController extends GetxController {
-  var userData = <User>[].obs; // Observable list of authentication data
-  var isLoading = true.obs; // Loading state
-
   final ApiService _apiService = ApiService();
+  var isLoading = false.obs;
+  var userData = <User>[].obs;
 
   @override
   void onInit() {
@@ -15,16 +14,17 @@ class UserController extends GetxController {
     super.onInit();
   }
 
+  // Fetch user data
   Future<void> fetchUserData() async {
     try {
       isLoading(true);
-      final fetchedAuthData = await _apiService.fetchUsers();
-      debugPrint("Fetch data ${fetchedAuthData.toString()}");
-      userData.assignAll(fetchedAuthData); // Update the observable list
+      final users = await _apiService.fetchUsers();
+      userData.assignAll(users); // Update the observable list
+      debugPrint("user controller -> $users");
     } catch (e) {
       Get.snackbar('Error', e.toString()); // Show error message
     } finally {
-      isLoading(false); // Stop loading
+      isLoading(false);
     }
   }
 }

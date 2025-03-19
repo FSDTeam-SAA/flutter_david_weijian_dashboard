@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NavUserScreen extends StatelessWidget {
-
-  final UserController authController = Get.put(UserController());
+  final UserController userController = Get.put(UserController());
 
   NavUserScreen({super.key});
 
@@ -12,20 +11,20 @@ class NavUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Authentication Data'),
+        title: const Text('User Data'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              authController.fetchUserData(); // Refresh the authentication data
+              userController.fetchUserData(); // Refresh the user data
             },
           ),
         ],
       ),
       body: Obx(() {
-        if (authController.isLoading.value) {
+        if (userController.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
-        } else if (authController.userData.isEmpty) {
+        } else if (userController.userData.isEmpty) {
           return const Center(child: Text('No user data found'));
         } else {
           return SingleChildScrollView(
@@ -39,14 +38,14 @@ class NavUserScreen extends StatelessWidget {
                 DataColumn(label: Text('Created At')),
                 DataColumn(label: Text('Updated At')),
               ],
-              rows: authController.userData.map((auth) {
+              rows: userController.userData.map((user) {
                 return DataRow(cells: [
-                  DataCell(Text(auth.name)),
-                  DataCell(Text(auth.email)),
-                  DataCell(Text(auth.role)),
-                  DataCell(Text(auth.dateOfBirth.toString())),
-                  DataCell(Text(auth.createdAt.toString())),
-                  DataCell(Text(auth.updatedAt.toString())),
+                  DataCell(Text(user.name)),
+                  DataCell(Text(user.email)),
+                  DataCell(Text(user.role)),
+                  DataCell(Text(user.dateOfBirth.toString())),
+                  DataCell(Text(user.createdAt.toString())),
+                  DataCell(Text(user.updatedAt.toString())),
                 ]);
               }).toList(),
             ),

@@ -1,3 +1,5 @@
+import 'package:drive_test_admin_dashboard/constants/key_constants.dart';
+
 class AuthResponse {
   final bool status;
   final String message;
@@ -13,7 +15,7 @@ class AuthResponse {
     return AuthResponse(
       status: json['status'],
       message: json['message'],
-      accessToken: json['accessToken'],
+      accessToken: json[KeyConstants.accessToken],
     );
   }
 }

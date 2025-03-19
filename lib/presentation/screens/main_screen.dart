@@ -1,5 +1,6 @@
 import 'package:drive_test_admin_dashboard/controller/navbar_controller.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/drawer/drawer.dart';
+import 'package:drive_test_admin_dashboard/presentation/widgets/profile_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,12 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard'),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(child: ProfileIcon()),
+          ),
+        ],
       ),
       body: Obx(() {
         return navController.currentScreen.value; // Reactive UI update

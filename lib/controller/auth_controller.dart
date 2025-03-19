@@ -1,17 +1,35 @@
 import 'package:drive_test_admin_dashboard/presentation/screens/auth/dashboard.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/auth/login_screen.dart';
-import 'package:drive_test_admin_dashboard/services/pi_service.dart';
+import 'package:drive_test_admin_dashboard/presentation/screens/main_screen.dart';
+import 'package:drive_test_admin_dashboard/services/api_service.dart';
+import 'package:drive_test_admin_dashboard/services/secure_storage_service.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
   final ApiService _apiService = ApiService();
+  final SecureStorageService _secureStorage = SecureStorageService();
   var isLoading = false.obs;
   var isLoggedIn = false.obs;
   var accessToken = ''.obs;
 
-  // Check if the admin is authenticated
-  bool get isAuthenticated => isLoggedIn.value;
+  @override
+  void onInit() {
+    checkLoginStatus();
+    super.onInit();
+  }
 
+  // Check if the user is already logged in
+  Future<void> checkLoginStatus() async {
+    isLoading(true);
+    final token = await _secureStorage.getAccessToken();
+    if (token != null) {
+      isLoggedIn(true);
+      accessToken(token);
+    }
+    isLoading(false);
+  }
+
+  // Admin login
   Future<void> adminLogin(String email, String password) async {
     try {
       isLoading(true);
@@ -19,7 +37,8 @@ class AuthController extends GetxController {
       if (response.status) {
         isLoggedIn(true);
         accessToken(response.accessToken ?? '');
-        Get.offAll(() => AdminDashboard()); // Navigate to admin dashboard
+        await _secureStorage.saveAccessToken(response.accessToken!); // Save token
+        Get.offAll(() => MainScreen()); // Navigate to admin dashboard
       } else {
         Get.snackbar('Error', response.message);
       }
@@ -31,9 +50,10 @@ class AuthController extends GetxController {
   }
 
   // Logout the admin
-  void logout() {
+  Future<void> logout() async {
     isLoggedIn(false);
     accessToken('');
+    await _secureStorage.deleteAccessToken(); // Delete token
     Get.offAll(() => LoginScreen()); // Redirect to login screen
   }
 }
