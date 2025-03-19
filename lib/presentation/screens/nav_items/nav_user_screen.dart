@@ -38,16 +38,19 @@ class NavUserScreen extends StatelessWidget {
                 DataColumn(label: Text('Created At')),
                 DataColumn(label: Text('Updated At')),
               ],
-              rows: userController.userData.map((user) {
-                return DataRow(cells: [
-                  DataCell(Text(user.name)),
-                  DataCell(Text(user.email)),
-                  DataCell(Text(user.role)),
-                  DataCell(Text(user.dateOfBirth.toString())),
-                  DataCell(Text(user.createdAt.toString())),
-                  DataCell(Text(user.updatedAt.toString())),
-                ]);
-              }).toList(),
+              rows:
+                  userController.userData.map((user) {
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(user.name)),
+                        DataCell(Text(user.email)),
+                        DataCell(Text(user.role)),
+                        DataCell(Text(user.dateOfBirth.toString())),
+                        DataCell(Text(user.createdAt.toString())),
+                        DataCell(Text(user.updatedAt.toString())),
+                      ],
+                    );
+                  }).toList(),
             ),
           );
         }

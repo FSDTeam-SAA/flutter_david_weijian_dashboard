@@ -1,25 +1,26 @@
+import 'package:drive_test_admin_dashboard/model/bugreport_model.dart';
 import 'package:drive_test_admin_dashboard/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:drive_test_admin_dashboard/model/user_model.dart';
 
-class UserController extends GetxController {
+class BugReportController extends GetxController {
   final ApiService _apiService = ApiService();
   var isLoading = false.obs;
-  var userData = <User>[].obs;
+  var bugReports = <BugReport>[].obs;
 
   @override
   void onInit() {
-    fetchUserData();
+    fetchBugReports();
     super.onInit();
   }
 
-  // Fetch user data
-  Future<void> fetchUserData() async {
+  // Fetch bug reports
+  Future<void> fetchBugReports() async {
     try {
       isLoading(true);
-      final users = await _apiService.fetchUsers();
-      userData.assignAll(users); // Update the observable list
+      final reports = await _apiService.fetchBugReports();
+      debugPrint("Bug Reposrt Data ->> $reports");
+      bugReports.assignAll(reports); // Update the observable list
     } catch (e) {
       Get.snackbar('Error', e.toString()); // Show error message
     } finally {
@@ -27,4 +28,3 @@ class UserController extends GetxController {
     }
   }
 }
-

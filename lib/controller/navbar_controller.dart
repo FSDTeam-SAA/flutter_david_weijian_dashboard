@@ -1,6 +1,6 @@
 // lib/navbar/controllers/nav_controller.dart
 import 'package:drive_test_admin_dashboard/presentation/screens/auth/dashboard.dart';
-import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_contact_screen.dart';
+import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_content_screen.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_customer_support_feed_screen.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_feature_access_lim_screen.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/nav_items/nav_marketing_promotions_screen.dart';
@@ -28,7 +28,7 @@ class NavController extends GetxController {
         currentScreen.value = NavPackageScreen();
         break;
       case 'Contact':
-        currentScreen.value = NavContactScreen();
+        currentScreen.value = NavContentScreen();
         break;
       case 'Feature Access Limitation':
         currentScreen.value = NavFeatureAccessLimScreen();
