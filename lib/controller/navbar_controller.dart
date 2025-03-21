@@ -27,7 +27,7 @@ class NavController extends GetxController {
       case 'Package':
         currentScreen.value = NavPackageScreen();
         break;
-      case 'Contact':
+      case 'Content':
         currentScreen.value = NavContentScreen();
         break;
       case 'Feature Access Limitation':

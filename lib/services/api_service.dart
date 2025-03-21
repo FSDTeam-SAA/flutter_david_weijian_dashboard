@@ -8,6 +8,7 @@ import 'package:drive_test_admin_dashboard/model/auth_model.dart';
 import 'package:drive_test_admin_dashboard/model/user_model.dart';
 import '../constants/api_constants.dart';
 import 'secure_storage_service.dart';
+import 'package:get/get.dart';
 
 class ApiService {
   final SecureStorageService _secureStorage = SecureStorageService();
@@ -102,7 +103,6 @@ class ApiService {
     }
   }
 
-
   // Fetch all reviews
 
   Future<List<ReviewData>> fetchReviews() async {
@@ -124,6 +124,112 @@ class ApiService {
       return data.map((reviewData) => ReviewData.fromJson(reviewData)).toList();
     } else {
       throw Exception('Failed to load reviews');
+    }
+  }
+
+  //// Post ///
+  // Future<void> createRoute(Map<String, dynamic> data) async {
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(ApiConstants.createRouteEndpoint),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: json.encode(data),
+  //     );
+
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       Get.snackbar('Success', 'Route created successfully!');
+  //     } else {
+  //       Get.snackbar('Error', 'Failed to create route: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Failed to connect to the server: $e');
+  //   }
+  // }
+
+  // Fetch all test centres
+  Future<Map<String, dynamic>> getAllTestCentres() async {
+    final token = await _secureStorage.getAccessToken();
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.testCentresEndpoint),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to fetch test centres: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  // Method to add a test center
+  Future<Map<String, dynamic>> addTestCentre(Map<String, dynamic> data) async {
+    final token = await _secureStorage.getAccessToken();
+
+    debugPrint("Data for test center -> $data");
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.addTestCentreEndpoint),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+
+      debugPrint("Response for test center data -> ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to add test centre: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  // Method to create a new route
+  Future<void> createRoute(Map<String, dynamic> data) async {
+    final token = await _secureStorage.getAccessToken();
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.createRouteEndpoint),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json', // Ensure Content-Type is set
+        },
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar('Success', 'Route created successfully');
+      } else {
+        throw Exception('Failed to create route: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
+  // Update a test centre
+  Future<Map<String, dynamic>> updateTestCentre(String id, Map<String, dynamic> data) async {
+    try {
+      final response = await http.put(
+        Uri.parse('${ApiConstants.updateTestCentreEndpoint}$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to update test centre: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
     }
   }
 }

@@ -21,10 +21,7 @@ class NavDrawer extends StatelessWidget {
             ),
             child: Text(
               'Navigation Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 24),
             ),
           ),
           // Navigation Items
@@ -40,7 +37,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.subscriptions), // Add an icon
             title: const Text('Subscription'),
             onTap: () {
-              navController.changeScreen('Subscription'); // Change screen to Subscription
+              navController.changeScreen(
+                'Subscription',
+              ); // Change screen to Subscription
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -53,10 +52,10 @@ class NavDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.contact_mail), // Add an icon
-            title: const Text('Contact'),
+            leading: const Icon(Icons.article), // Add an icon
+            title: const Text('Content'),
             onTap: () {
-              navController.changeScreen('Contact'); // Change screen to Contact
+              navController.changeScreen('Content'); // Change screen to Contact
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -64,7 +63,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.lock), // Add an icon
             title: const Text('Feature Access Limitation'),
             onTap: () {
-              navController.changeScreen('Feature Access Limitation'); // Change screen to Feature Access Limitation
+              navController.changeScreen(
+                'Feature Access Limitation',
+              ); // Change screen to Feature Access Limitation
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -72,7 +73,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.analytics), // Add an icon
             title: const Text('Report & Analytics'),
             onTap: () {
-              navController.changeScreen('Report & Analytics'); // Change screen to Report & Analytics
+              navController.changeScreen(
+                'Report & Analytics',
+              ); // Change screen to Report & Analytics
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -80,7 +83,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.campaign), // Add an icon
             title: const Text('Marketing & Promotions'),
             onTap: () {
-              navController.changeScreen('Marketing & Promotions'); // Change screen to Marketing & Promotions
+              navController.changeScreen(
+                'Marketing & Promotions',
+              ); // Change screen to Marketing & Promotions
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -88,7 +93,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.support_agent), // Add an icon
             title: const Text('Customer Support Feedback'),
             onTap: () {
-              navController.changeScreen('Customer Support Feedback'); // Change screen to Customer Support Feedback
+              navController.changeScreen(
+                'Customer Support Feedback',
+              ); // Change screen to Customer Support Feedback
               Navigator.pop(context); // Close the drawer
             },
           ),
@@ -96,7 +103,9 @@ class NavDrawer extends StatelessWidget {
             leading: const Icon(Icons.security), // Add an icon
             title: const Text('Securities Compliance'),
             onTap: () {
-              navController.changeScreen('Securities Compliance'); // Change screen to Securities Compliance
+              navController.changeScreen(
+                'Securities Compliance',
+              ); // Change screen to Securities Compliance
               Navigator.pop(context); // Close the drawer
             },
           ),
