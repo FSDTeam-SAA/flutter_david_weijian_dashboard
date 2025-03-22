@@ -1,5 +1,3 @@
-import 'package:drive_test_admin_dashboard/core/Routes/app_route.dart';
-import 'package:drive_test_admin_dashboard/core/Routes/route_names.dart';
 import 'package:drive_test_admin_dashboard/core/binders/nav_binder.dart';
 import 'package:drive_test_admin_dashboard/core/theme/theme_data.dart';
 import 'package:drive_test_admin_dashboard/presentation/screens/splash_screen.dart';
