@@ -1,22 +1,25 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiConstants {
-  static const String baseUrl =
-      'https://backend-david-weijian.onrender.com/api/v1';
+  // Access the base URL from the .env file
+  static final String baseUrl = dotenv.env['BASE_URL'] ?? '';
 
-  static const String adminLoginEndpoint = '$baseUrl/admin/login';
-  static const String usersEndpoint = '$baseUrl/admin/all-users';
+  static String get adminLoginEndpoint => '$baseUrl/admin/login';
+  static String get usersEndpoint => '$baseUrl/admin/all-users';
 
-  static const String contactDetailsEndpoint = '$baseUrl/admin/contact-details';
-  static const String bugReportEndpoint = '$baseUrl/admin/bug-report';
-  static const String allReviewsEndpoint = '$baseUrl/admin/all-review';
+  static String get contactDetailsEndpoint => '$baseUrl/admin/contact-details';
+  static String get bugReportEndpoint => '$baseUrl/admin/bug-report';
+  static String get allReviewsEndpoint => '$baseUrl/admin/all-review';
 
+  static String get testCentresEndpoint => '$baseUrl/admin/all-test-centre';
 
-  static const String testCentresEndpoint = '$baseUrl/admin/all-test-centre';
+  static String get routesEndpoint => '$baseUrl/route-details/route';
 
   // post
-  static const String addTestCentreEndpoint = '$baseUrl/admin/add-test-centre';
-  static const String createRouteEndpoint = '$baseUrl/admin/create-route';
+  static String get addTestCentreEndpoint => '$baseUrl/admin/add-test-centre';
+  static String get createRouteEndpoint => '$baseUrl/admin/create-route';
 
   // put
-  static const String updateTestCentreEndpoint = '$baseUrl/admin/update-test-centre';
+  static String get updateTestCentreEndpoint => '$baseUrl/admin/update-test-centre';
 
 }

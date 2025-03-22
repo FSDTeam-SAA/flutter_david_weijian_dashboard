@@ -1,3 +1,5 @@
+import 'package:drive_test_admin_dashboard/model/route_model.dart';
+import 'package:drive_test_admin_dashboard/model/test_centre_model.dart';
 import 'package:drive_test_admin_dashboard/services/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -25,13 +27,17 @@ class ContentController extends GetxController {
   var showAddTestCentre = true.obs;
   var selectedTestCentre = <String, dynamic>{}.obs;
 
+  var routeResponse = Rx<RouteResponse?>(null);
+
   var isLoading = false.obs;
 
   // Button releted variables
   var showAddTestCentreButton = false.obs;
 
+  // New variable to track if route details should be shown
+  var showRouteDetails = false.obs;
 
-  var testCentres = <Map<String, dynamic>>[].obs; // List of test centres
+  var testCentres = <TestCentre>[].obs; // List of test centres
 
   final ApiService _apiService = ApiService();
 
@@ -47,10 +53,14 @@ class ContentController extends GetxController {
     try {
       final response = await _apiService.getAllTestCentres();
       if (response['status'] == true) {
-        testCentres.value = List<Map<String, dynamic>>.from(response['data']);
-        print('Test Centres: $testCentres');
+        testCentres.value = List<TestCentre>.from(
+          response['data'].map((centre) => TestCentre.fromJson(centre)),
+        );
       } else {
-        Get.snackbar('Error', 'Failed to fetch test centres: ${response['message']}');
+        Get.snackbar(
+          'Error',
+          'Failed to fetch test centres: ${response['message']}',
+        );
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to connect to the server: $e');
@@ -58,6 +68,27 @@ class ContentController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  Future<void> getAllRoutes(String id) async {
+  isLoading.value = true;
+  try {
+    final response = await _apiService.getAllRoutes(id);
+    print('API Response: $response'); // Debug log
+    if (response['status'] == true) {
+      routeResponse.value = RouteResponse.fromJson(response);
+      showRouteDetails.value = true; // Show the route details
+    } else {
+      Get.snackbar(
+        'Error',
+        'Failed to fetch test centres: ${response['message']}',
+      );
+    }
+  } catch (e) {
+    Get.snackbar('Error', 'Failed to connect to the server: $e');
+  } finally {
+    isLoading.value = false;
+  }
+}
 
   // Method to reset the test centre form
   void resetTestCentreForm() {
@@ -72,7 +103,6 @@ class ContentController extends GetxController {
   void setSelectedTestCentre(Map<String, dynamic> testCentre) {
     selectedTestCentre.value = testCentre;
   }
-
 
   // Method to add a test center
   Future<void> addTestCentre() async {
@@ -165,7 +195,10 @@ class ContentController extends GetxController {
         Get.snackbar('Success', 'Test Centre updated successfully');
         fetchAllTestCentres(); // Refresh the list
       } else {
-        Get.snackbar('Error', 'Failed to update test centre: ${response['message']}');
+        Get.snackbar(
+          'Error',
+          'Failed to update test centre: ${response['message']}',
+        );
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to connect to the server: $e');

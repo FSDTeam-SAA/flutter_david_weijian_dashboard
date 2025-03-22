@@ -1,5 +1,5 @@
 import 'package:drive_test_admin_dashboard/model/contact_model.dart';
-import 'package:drive_test_admin_dashboard/model/review_data_model.dart';
+import 'package:drive_test_admin_dashboard/model/review_model.dart';
 import 'package:drive_test_admin_dashboard/services/api_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';

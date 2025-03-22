@@ -1,3 +1,5 @@
+import 'package:drive_test_admin_dashboard/model/route_model.dart';
+import 'package:drive_test_admin_dashboard/model/stops_model.dart';
 import 'package:drive_test_admin_dashboard/presentation/widgets/loading_widget.dart';
 import 'package:drive_test_admin_dashboard/presentation/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,6 @@ class NavContentScreen extends StatelessWidget {
         actions: [
           ElevatedButton(
             onPressed: () {
-              // Reset the form and toggle the "Add Test Center" section
-
               // Toggle the "Add Test Center" section
               _controller.showAddTestCentreButton.toggle();
 
@@ -30,8 +30,8 @@ class NavContentScreen extends StatelessWidget {
             child: Obx(
               () =>
                   _controller.showAddTestCentreButton.value
-                      ? Text('View Test Centres')
-                      : Text('Add Test Centre'),
+                      ? const Text('View Test Centres')
+                      : const Text('Add Test Centre'),
             ),
           ),
           const SizedBox(width: 20),
@@ -43,7 +43,7 @@ class NavContentScreen extends StatelessWidget {
           Obx(
             () =>
                 _controller.isLoading.value
-                    ? LoadingWidget()
+                    ? const LoadingWidget()
                     : const SizedBox(),
           ),
 
@@ -52,6 +52,8 @@ class NavContentScreen extends StatelessWidget {
             () =>
                 _controller.showAddTestCentreButton.value
                     ? _buildAddTestCentreForm()
+                    : _controller.showRouteDetails.value
+                    ? _buildRouteDetailsWidget(_controller.routeResponse.value!)
                     : _buildTestCentreList(),
           ),
         ],
@@ -204,26 +206,18 @@ class NavContentScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final testCentre = _controller.testCentres[index];
                   return ListTile(
-                    title: Text(testCentre['name']),
+                    title: Text(testCentre.name),
                     subtitle: Column(
-                      // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(testCentre['address']),
-                        Text(testCentre['postCode']),
-
+                        Text(testCentre.address),
+                        Text(testCentre.postCode),
                       ],
                     ),
                     trailing: ElevatedButton(
                       onPressed: () {
-                        // Set the selected test centre
-                        _controller.testCentreId.value = testCentre['_id'];
-                        _controller.testCentreName.value = testCentre['name'];
-                        _controller.testCentreAddress.value =
-                            testCentre['address'];
-                        _controller.postCode.value = testCentre['postCode'];
-                        _controller.showAddTestCentreButton.value = true;
-                        showTestCentreForm(context, _controller);
+                        // Fetch and show route details for the selected test centre
+                        _controller.getAllRoutes(testCentre.id);
                       },
                       child: const Text('Select'),
                     ),
@@ -232,65 +226,114 @@ class NavContentScreen extends StatelessWidget {
               ),
     );
   }
-  void showTestCentreForm(BuildContext context, ContentController controller) {
-  final formKey = GlobalKey<FormState>();
 
-  Get.dialog(
-    AlertDialog(
-      title: Text(controller.selectedTestCentre.isEmpty ? 'Add Test Center' : 'Update Test Center'),
-      content: Form(
-        key: formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                initialValue: controller.selectedTestCentre['name'] ?? '',
-                decoration: const InputDecoration(labelText: 'Test Centre Name'),
-                onChanged: (value) => controller.testCentreName.value = value,
-                validator: (value) => value?.isEmpty ?? true ? 'This field is required' : null,
-              ),
-              TextFormField(
-                initialValue: controller.selectedTestCentre['address'] ?? '',
-                decoration: const InputDecoration(labelText: 'Address'),
-                onChanged: (value) => controller.testCentreAddress.value = value,
-                validator: (value) => value?.isEmpty ?? true ? 'This field is required' : null,
-              ),
-              TextFormField(
-                initialValue: controller.selectedTestCentre['postCode'] ?? '',
-                decoration: const InputDecoration(labelText: 'Post Code'),
-                onChanged: (value) => controller.postCode.value = value,
-                validator: (value) => value?.isEmpty ?? true ? 'This field is required' : null,
-              ),
-            ],
+  // Build the RouteDetailsScreen as a widget
+  Widget _buildRouteDetailsWidget(RouteResponse routeResponse) {
+    if (routeResponse.data.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('No route details available'),
+            ElevatedButton(
+              onPressed: () {
+                _controller.showRouteDetails.value = false;
+              },
+              child: Text('Back to Test Centres'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final route = routeResponse.data.first;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Back button to return to the test centre list
+          ElevatedButton(
+            onPressed: () {
+              _controller.showRouteDetails.value = false;
+            },
+            child: const Text('Back to Test Centres'),
           ),
-        ),
+          const SizedBox(height: 20),
+
+          // Test Centre Details
+          _buildSectionTitle('Test Centre Details'),
+          _buildDetailRow('Name', route.testCentreName), // Handle null
+          _buildDetailRow('Address', route.address), // Handle null
+          _buildDetailRow('Pass Rate', '${route.passRate}%'), // Handle null
+          const SizedBox(height: 20),
+
+          // Route Details
+          _buildSectionTitle('Route Details'),
+          _buildDetailRow('Route Name', route.routeName), // Handle null
+          _buildDetailRow('From', route.from), // Handle null
+          _buildDetailRow('To', route.to), // Handle null
+          _buildDetailRow(
+            'Expected Time',
+            '${route.expectedTime} minutes',
+          ), // Handle null
+          _buildDetailRow('Share URL', route.shareUrl), // Handle null
+          const SizedBox(height: 20),
+
+          // Start and End Coordinates
+          _buildSectionTitle('Coordinates'),
+          _buildDetailRow(
+            'Start',
+            'Lat: ${route.startCoordinator['lat'] ?? 0.0}, Lng: ${route.startCoordinator['lng'] ?? 0.0}',
+          ),
+          _buildDetailRow(
+            'End',
+            'Lat: ${route.endCoordinator['lat'] ?? 0.0}, Lng: ${route.endCoordinator['lng'] ?? 0.0}',
+          ),
+          const SizedBox(height: 20),
+
+          // List of Stops
+          _buildSectionTitle('Stops'),
+          ...route.listOfStops.map((stop) => _buildStopCard(stop)),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () {
-            if (formKey.currentState!.validate()) {
-              final data = {
-                "name": controller.testCentreName.value,
-                "address": controller.testCentreAddress.value,
-                "postCode": controller.postCode.value,
-              };
-              if (controller.selectedTestCentre.isEmpty) {
-                controller.addTestCentre();
-              } else {
-                controller.updateTestCentre(controller.selectedTestCentre['_id'], data);
-              }
-              Get.back();
-            }
-          },
-          child: const Text('Save'),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.blue,
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Text(
+            '$label: ',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Text(value, style: const TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStopCard(Stop stop) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        title: Text('Stop ID: ${stop.id}'),
+        subtitle: Text('Lat: ${stop.lat}, Lng: ${stop.lng}'),
+      ),
+    );
+  }
 }

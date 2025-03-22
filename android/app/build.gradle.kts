@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.drive_test_admin_dashboard"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "flutter.ndkVersion"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:drive_test_admin_dashboard/model/bugreport_model.dart';
 import 'package:drive_test_admin_dashboard/model/contact_model.dart';
 import 'package:drive_test_admin_dashboard/model/review_data_model.dart';
+import 'package:drive_test_admin_dashboard/model/review_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:drive_test_admin_dashboard/model/auth_model.dart';
@@ -128,24 +129,6 @@ class ApiService {
   }
 
   //// Post ///
-  // Future<void> createRoute(Map<String, dynamic> data) async {
-
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(ApiConstants.createRouteEndpoint),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: json.encode(data),
-  //     );
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       Get.snackbar('Success', 'Route created successfully!');
-  //     } else {
-  //       Get.snackbar('Error', 'Failed to create route: ${response.body}');
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to connect to the server: $e');
-  //   }
-  // }
 
   // Fetch all test centres
   Future<Map<String, dynamic>> getAllTestCentres() async {
@@ -215,8 +198,31 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getAllRoutes(String id) async {
+    final token = await _secureStorage.getAccessToken();
+    try {
+      final response = await http.get(
+        Uri.parse("${ApiConstants.routesEndpoint}/$id"),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      debugPrint("Response for all routes data -> ${response.body}");
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to fetch routes: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to the server: $e');
+    }
+  }
+
   // Update a test centre
-  Future<Map<String, dynamic>> updateTestCentre(String id, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> updateTestCentre(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final response = await http.put(
         Uri.parse('${ApiConstants.updateTestCentreEndpoint}$id'),
