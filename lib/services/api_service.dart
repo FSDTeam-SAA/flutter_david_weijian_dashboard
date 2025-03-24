@@ -175,6 +175,7 @@ class ApiService {
   }
 
   // Method to create a new route
+
   Future<void> createRoute(Map<String, dynamic> data) async {
     final token = await _secureStorage.getAccessToken();
     try {
@@ -188,7 +189,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar('Success', 'Route created successfully');
+        // Success handling is done in the controller
       } else {
         throw Exception('Failed to create route: ${response.body}');
       }
@@ -205,7 +206,7 @@ class ApiService {
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      debugPrint("Response for all routes data -> ${response.body}");
+      // debugPrint("Response for all routes data -> ${response.body}");
 
       if (response.statusCode == 200) {
         return json.decode(response.body);

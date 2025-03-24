@@ -14,6 +14,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Admin Dashboard'),
+        centerTitle: false,
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 16.0),

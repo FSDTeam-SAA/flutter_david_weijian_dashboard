@@ -70,25 +70,25 @@ class ContentController extends GetxController {
   }
 
   Future<void> getAllRoutes(String id) async {
-  isLoading.value = true;
-  try {
-    final response = await _apiService.getAllRoutes(id);
-    print('API Response: $response'); // Debug log
-    if (response['status'] == true) {
-      routeResponse.value = RouteResponse.fromJson(response);
-      showRouteDetails.value = true; // Show the route details
-    } else {
-      Get.snackbar(
-        'Error',
-        'Failed to fetch test centres: ${response['message']}',
-      );
+    isLoading.value = true;
+    try {
+      final response = await _apiService.getAllRoutes(id);
+      // print('API Response: $response'); // Debug log
+      if (response['status'] == true) {
+        routeResponse.value = RouteResponse.fromJson(response);
+        showRouteDetails.value = true; // Show the route details
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to fetch test centres: ${response['message']}',
+        );
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to connect to the server: $e');
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    Get.snackbar('Error', 'Failed to connect to the server: $e');
-  } finally {
-    isLoading.value = false;
   }
-}
 
   // Method to reset the test centre form
   void resetTestCentreForm() {
@@ -179,11 +179,34 @@ class ContentController extends GetxController {
 
     try {
       await _apiService.createRoute(data);
+      Get.snackbar('Success', 'Route created successfully');
+
+      // Clear the text fields
+      clearRouteForm();
+
+      // Navigate back to the "View Test Centres" screen
+      showRouteDetails.value = false;
+      showAddTestCentreButton.value = false;
+
+      // Refresh the test centres list
+      fetchAllTestCentres();
     } catch (e) {
       Get.snackbar('Error', 'Failed to create route: $e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Method to clear the route form fields
+  void clearRouteForm() {
+    routeName.value = '';
+    shareUrl.value = '';
+    address.value = '';
+    fileName.value = '';
+    from.value = '';
+    to.value = '';
+    expectedTime.value = 0;
+    listOfStops.value = [];
   }
 
   // Update a test centre

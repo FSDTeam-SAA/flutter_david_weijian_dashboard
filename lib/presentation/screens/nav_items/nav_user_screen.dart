@@ -16,7 +16,7 @@ class NavUserScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              userController.fetchUserData(); // Refresh the user data
+              userController.fetchUserData();
             },
           ),
         ],
@@ -27,31 +27,126 @@ class NavUserScreen extends StatelessWidget {
         } else if (userController.userData.isEmpty) {
           return const Center(child: Text('No user data found'));
         } else {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text('Name')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Role')),
-                DataColumn(label: Text('Date of Birth')),
-                DataColumn(label: Text('Created At')),
-                DataColumn(label: Text('Updated At')),
-              ],
-              rows:
-                  userController.userData.map((user) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(user.name)),
-                        DataCell(Text(user.email)),
-                        DataCell(Text(user.role)),
-                        DataCell(Text(user.dateOfBirth.toString())),
-                        DataCell(Text(user.createdAt.toString())),
-                        DataCell(Text(user.updatedAt.toString())),
-                      ],
-                    );
-                  }).toList(),
-            ),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  elevation: 4,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    scrollDirection: Axis.vertical,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: constraints.maxWidth,
+                      ),
+                      child: DataTable(
+                        columnSpacing: 24,
+                        columns: const [
+                          DataColumn(
+                            label: Text(
+                              'Name',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Email',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Role',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Date of Birth',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Created At',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Updated At',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                        rows:
+                            userController.userData.asMap().entries.map((
+                              entry,
+                            ) {
+                              return DataRow(
+                                color: WidgetStateProperty.resolveWith<Color?>((
+                                  states,
+                                ) {
+                                  return entry.key.isEven
+                                      ? Colors.grey[200]
+                                      : Colors.white;
+                                }),
+                                cells: [
+                                  DataCell(
+                                    Text(entry.value.name),
+                                    onTap: () {
+                                      print('Clicked on ${entry.value.name}');
+                                    },
+                                  ),
+                                  DataCell(
+                                    Text(entry.value.email),
+                                    onTap: () {
+                                      print('Clicked on ${entry.value.email}');
+                                    },
+                                  ),
+                                  DataCell(
+                                    Text(entry.value.role),
+                                    onTap: () {
+                                      print('Clicked on ${entry.value.role}');
+                                    },
+                                  ),
+                                  DataCell(
+                                    Text(entry.value.dateOfBirth.toString()),
+                                    onTap: () {
+                                      print(
+                                        'Clicked on ${entry.value.dateOfBirth}',
+                                      );
+                                    },
+                                  ),
+                                  DataCell(
+                                    Text(entry.value.createdAt.toString()),
+                                    onTap: () {
+                                      print(
+                                        'Clicked on ${entry.value.createdAt}',
+                                      );
+                                    },
+                                  ),
+                                  DataCell(
+                                    Text(entry.value.updatedAt.toString()),
+                                    onTap: () {
+                                      print(
+                                        'Clicked on ${entry.value.updatedAt}',
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           );
         }
       }),
