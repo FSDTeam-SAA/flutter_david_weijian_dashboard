@@ -3,7 +3,7 @@ name: Flutter Web Deploy
 on:
   push:
     branches:
-      - main # Trigger the workflow on pushes to the main branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -12,29 +12,45 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Set up Flutter
+      # Set up Java (required for Flutter web build)
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      # Set up Flutter with exact version
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.2'
+          channel: 'stable'
 
       # Install dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      # Copy the .env file to the web directory
-      - name: Copy .env File
-        run: cp .env lib/.env
-
-      # Build the Flutter web app
+      # Build the Flutter web app with proper base href
       - name: Build Flutter Web
-        run: flutter build web --release
+        run: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+          flutter build web \
+            --release \
+            --base-href /flutter_david_weijian_dashboard/ \
+            --dart-define=FLUTTER_WEB_CANVASKIT_URL=/flutter_david_weijian_dashboard/canvaskit/
+
+      # Add 404.html for client-side routing (important!)
+      - name: Handle Routing
+        run: |
+          cp build/web/index.html build/web/404.html
+          sed -i 's/<base href="\/flutter_david_weijian_dashboard\/">/<base href="\/">/g' build/web/404.html
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUBTOKEN }}
-          publish_dir: build/web
+          publish_dir: ./build/web
+          keep_files: false  # Clean old files
