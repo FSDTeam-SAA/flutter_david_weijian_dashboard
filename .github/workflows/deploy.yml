@@ -1,0 +1,38 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Create .env file
+        run: echo "BASE_URL=${{ secrets.BASE_URL }}" > .env
+
+      - name: Build web
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+        run: |
+          flutter pub run build_runner build
+          flutter build web --release --dart-define=FLUTTER_WEB_USE_SKIA=true
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUBTOKEN }}
+          publish_dir: build/web
