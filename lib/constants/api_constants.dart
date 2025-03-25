@@ -21,5 +21,10 @@ class ApiConstants {
 
   // put
   static String get updateTestCentreEndpoint => '$baseUrl/admin/update-test-centre';
+  static String get updateRouteEndpoint => '$baseUrl/admin/update-route/';
+
+  // delete
+  static String get deleteTestCentreEndpoint => '$baseUrl/admin/delete-test-centre/';
+  static String get deleteRouteEndpoint => '$baseUrl/admin/delete-route/';
 
 }

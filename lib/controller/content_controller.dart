@@ -16,6 +16,8 @@ class ContentController extends GetxController {
   var postCode = ''.obs;
 
   var testCentreId = ''.obs;
+  var routeId = ''.obs;
+
   var routeName = ''.obs;
   var shareUrl = ''.obs;
   var address = ''.obs;
@@ -36,6 +38,8 @@ class ContentController extends GetxController {
 
   // New variable to track if route details should be shown
   var showRouteDetails = false.obs;
+
+  var isEditing = false.obs;
 
   var testCentres = <TestCentre>[].obs; // List of test centres
 
@@ -197,6 +201,82 @@ class ContentController extends GetxController {
     }
   }
 
+  // In ContentController class
+  void setSelectedRouteForEditing(RouteModel route) {
+    testCentreId.value = route.testCentreId;
+    routeId.value = route.id;
+    routeName.value = route.routeName;
+    shareUrl.value = route.shareUrl;
+    address.value = route.address;
+    from.value = route.from;
+    to.value = route.to;
+    expectedTime.value = route.expectedTime;
+    listOfStops.value =
+        route.listOfStops.map((stop) {
+          return {
+            // '_id': stop.id,
+            'lat': stop.lat,
+            'lng': stop.lng,
+          };
+        }).toList();
+
+    showAddTestCentreButton.value = true;
+    isEditing.value = true;
+  }
+
+  Future<void> updateRoute() async {
+    try {
+      isLoading.value = true;
+
+      final data = {
+        "routeName": routeName.value,
+        "shareUrl": shareUrl.value,
+        "address": address.value,
+        "from": from.value,
+        "to": to.value,
+        "expectedTime": expectedTime.value,
+        "listOfStops": listOfStops.toList(),
+        "startCoordinator": {
+          "lat": listOfStops.first['lat'],
+          "lng": listOfStops.first['lng'],
+        },
+        "endCoordinator": {
+          "lat": listOfStops.last['lat'],
+          "lng": listOfStops.last['lng'],
+        },
+      };
+
+      final response = await _apiService.updateRoute(routeId.value, data);
+
+      if (response['status'] == true) {
+        Get.snackbar('Success', 'Route updated successfully');
+        isEditing.value = false;
+        resetRouteForm();
+        // Refresh the route list
+        await getAllRoutes(testCentreId.value);
+      } else {
+        throw Exception(response['message'] ?? 'Failed to update route');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to update route: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void resetRouteForm() {
+    routeId.value = '';
+    routeName.value = '';
+    shareUrl.value = '';
+    address.value = '';
+    from.value = '';
+    to.value = '';
+    expectedTime.value = 0;
+    listOfStops.value = [];
+    fileName.value = '';
+    isEditing.value = false;
+  }
+
   // Method to clear the route form fields
   void clearRouteForm() {
     routeName.value = '';
@@ -209,22 +289,64 @@ class ContentController extends GetxController {
     listOfStops.value = [];
   }
 
-  // Update a test centre
-  Future<void> updateTestCentre(String id, Map<String, dynamic> data) async {
+  // Set test centre for editing
+  void setTestCentreForEditing(TestCentre testCentre) {
+    testCentreId.value = testCentre.id;
+    testCentreName.value = testCentre.name;
+    testCentreAddress.value = testCentre.address;
+    postCode.value = testCentre.postCode;
+    passRate.value = testCentre.passRate.toString();
+    routes.value = testCentre.routes;
+    isEditing.value = true;
+  }
+
+  // Cancel editing
+  void cancelEditTestCentre() {
+    resetTestCentreForm();
+    isEditing.value = false;
+  }
+
+  // Update test centre
+  Future<void> updateTestCentre(String id) async {
     isLoading.value = true;
+    final data = {
+      "name": testCentreName.value,
+      "address": testCentreAddress.value,
+      "postCode": postCode.value,
+      "passRate": passRate.value,
+      "routes": routes.value,
+    };
+
     try {
       final response = await _apiService.updateTestCentre(id, data);
       if (response['status'] == true) {
         Get.snackbar('Success', 'Test Centre updated successfully');
-        fetchAllTestCentres(); // Refresh the list
+        await fetchAllTestCentres();
+        resetTestCentreForm();
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to update test centre: ${response['message']}',
-        );
+        throw Exception(response['message'] ?? 'Failed to update test centre');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to connect to the server: $e');
+      Get.snackbar('Error', 'Failed to update test centre: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Delete test centre
+  Future<void> deleteTestCentre(String id) async {
+    isLoading.value = true;
+    try {
+      final response = await _apiService.deleteTestCentre(id);
+      if (response['status'] == true) {
+        Get.snackbar('Success', 'Test Centre deleted successfully');
+        await fetchAllTestCentres();
+        resetTestCentreForm();
+      } else {
+        throw Exception(response['message'] ?? 'Failed to delete test centre');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to delete test centre: $e');
     } finally {
       isLoading.value = false;
     }

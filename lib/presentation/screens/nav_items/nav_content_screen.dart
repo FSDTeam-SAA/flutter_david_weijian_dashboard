@@ -127,134 +127,154 @@ class NavContentScreen extends StatelessWidget {
   // Build the "Add Test Centre" Form
   Widget _buildAddTestCentreForm() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(.0),
+      padding: const EdgeInsets.all(16.0),
       child: SizedBox(
         width: Get.width * 0.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Obx(
-              () =>
-                  _controller.testCentreId.isEmpty
-                      ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Add Test Center',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _controller.isEditing.value
+                        ? 'Edit Route'
+                        : 'Add Test Center',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
 
-                          const SizedBox(height: 10),
-                          CustomTextField(
-                            label: 'Test Centre Name',
-                            onChanged:
-                                (value) =>
-                                    _controller.testCentreName.value = value,
-                          ),
-                          CustomTextField(
-                            label: 'Address',
-                            onChanged:
-                                (value) =>
-                                    _controller.testCentreAddress.value = value,
-                          ),
-                          CustomTextField(
-                            label: 'Post Code',
-                            onChanged:
-                                (value) => _controller.postCode.value = value,
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed:
-                                _controller.isLoading.value
-                                    ? null
-                                    : _controller.addTestCentre,
-                            child: const Text('Add Test Center'),
-                          ),
-                        ],
-                      )
-                      : Column(
+                  if (_controller.testCentreId.isEmpty) ...[
+                    const SizedBox(height: 10),
+                    CustomTextField(
+                      label: 'Test Centre Name',
+                      onChanged:
+                          (value) => _controller.testCentreName.value = value,
+                      initialValue: _controller.testCentreName.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    CustomTextField(
+                      label: 'Address',
+                      onChanged:
+                          (value) =>
+                              _controller.testCentreAddress.value = value,
+                      initialValue: _controller.testCentreAddress.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    CustomTextField(
+                      label: 'Post Code',
+                      onChanged: (value) => _controller.postCode.value = value,
+                      initialValue: _controller.postCode.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed:
+                          _controller.isLoading.value
+                              ? null
+                              : _controller.addTestCentre,
+                      child: const Text('Add Test Center'),
+                    ),
+                  ] else ...[
+                    Text(
+                      'Test Center: ${_controller.testCentreName.value}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Route Information',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    CustomTextField(
+                      label: 'Route Name',
+                      onChanged: (value) => _controller.routeName.value = value,
+                      initialValue: _controller.routeName.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    CustomTextField(
+                      label: 'Share URL',
+                      onChanged: (value) => _controller.shareUrl.value = value,
+                      initialValue: _controller.shareUrl.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    CustomTextField(
+                      label: 'Address',
+                      onChanged: (value) => _controller.address.value = value,
+                      initialValue: _controller.address.value,
+                      setInitialValueOnlyOnce: true,
+                    ),
+                    const SizedBox(height: 20),
+                    if (!_controller.isEditing.value)
+                      ElevatedButton(
+                        onPressed:
+                            _controller.isLoading.value
+                                ? null
+                                : _controller.pickAndParseGPXFile,
+                        child: const Text('Pick GPX File'),
+                      ),
+                    Obx(
+                      () =>
+                          _controller.fileName.isNotEmpty
+                              ? Text(
+                                'Picked File: ${_controller.fileName.value}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.blue,
+                                ),
+                              )
+                              : const SizedBox(),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Test Center: ${_controller.testCentreName.value}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          if (_controller.from.isNotEmpty)
+                            Text('From: ${_controller.from.value}'),
+                          if (_controller.to.isNotEmpty)
+                            Text('To: ${_controller.to.value}'),
+                          if (_controller.expectedTime.value > 0)
+                            Text(
+                              'Expected Time: ${_controller.expectedTime.value} minutes',
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Route Information',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          CustomTextField(
-                            label: 'Route Name',
-                            onChanged:
-                                (value) => _controller.routeName.value = value,
-                          ),
-                          CustomTextField(
-                            label: 'Share URL',
-                            onChanged:
-                                (value) => _controller.shareUrl.value = value,
-                          ),
-                          CustomTextField(
-                            label: 'Address',
-                            onChanged:
-                                (value) => _controller.address.value = value,
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed:
-                                _controller.isLoading.value
-                                    ? null
-                                    : _controller.pickAndParseGPXFile,
-                            child: const Text('Pick GPX File'),
-                          ),
-                          Obx(
-                            () =>
-                                _controller.fileName.isNotEmpty
-                                    ? Text(
-                                      'Picked File: ${_controller.fileName.value}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.blue,
-                                      ),
-                                    )
-                                    : const SizedBox(),
-                          ),
-                          const SizedBox(height: 20),
-                          Obx(
-                            () => Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (_controller.from.isNotEmpty)
-                                  Text('From: ${_controller.from.value}'),
-                                if (_controller.to.isNotEmpty)
-                                  Text('To: ${_controller.to.value}'),
-                                if (_controller.expectedTime.value > 0)
-                                  Text(
-                                    'Expected Time: ${_controller.expectedTime.value} minutes',
-                                  ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed:
-                                _controller.isLoading.value
-                                    ? null
-                                    : _controller.createRoute,
-                            child: const Text('Create Route'),
-                          ),
                         ],
                       ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed:
+                          _controller.isLoading.value
+                              ? null
+                              : _controller.isEditing.value
+                              ? _controller.updateRoute
+                              : _controller.createRoute,
+                      child: Text(
+                        _controller.isEditing.value
+                            ? 'Update Route'
+                            : 'Create Route',
+                      ),
+                    ),
+                    if (_controller.isEditing.value)
+                      TextButton(
+                        onPressed: () {
+                          _controller.isEditing.value = false;
+                          _controller.resetRouteForm();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),
@@ -383,16 +403,23 @@ class NavContentScreen extends StatelessWidget {
           _buildDetailRow('Pass Rate', '${routeResponse.data.first.passRate}%'),
           const SizedBox(height: 20),
 
+          IconButton(onPressed: () {
+            _controller.showAddTestCentreButton.value = true;
+            
+          }, icon: Icon(Icons.edit)),
+
+          const SizedBox(height: 20),
+
           // Add New Route Button
           ElevatedButton(
             onPressed: () {
               // Reset the route form and show the add route form
               // _controller.clearRouteForm();
 
-              _controller.testCentreId.value = routeResponse.data.first.testCentreId;
+              _controller.testCentreId.value =
+                  routeResponse.data.first.testCentreId;
               _controller.showAddTestCentreButton.value = true;
               _controller.showAddTestCentre.value = false;
-              
             },
             child: const Text('Add New Route'),
           ),
@@ -456,6 +483,7 @@ class NavContentScreen extends StatelessWidget {
                     // Set the selected route for editing
                     // _controller.setSelectedRoute(route);
                     _controller.showAddTestCentreButton.value = true;
+                    _controller.setSelectedRouteForEditing(route);
                   },
                 ),
                 // Delete Button
